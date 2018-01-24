@@ -1,0 +1,28 @@
+{  
+   "configuration":{  
+      "executor":"v2",
+      "keywords":{  
+         "semantic":false
+      },
+      "topics":{  
+         "semantic":false
+      },
+      "transcripts":{  
+         "formatNumbers":[  
+            "digits",
+            "dashed"
+         ]
+      },
+      "publish":{  
+         "callbacks":[ 
+            {  
+               "url":"your-callback-url",
+               "method":"POST",
+               "include":[  
+                  "transcripts", "metadata"
+               ]
+            }
+         ]
+      }
+   }
+}

@@ -1,28 +1,35 @@
-{  
-   "configuration":{  
-      "executor":"v2",
-      "keywords":{  
-         "semantic":false
-      },
-      "topics":{  
-         "semantic":false
-      },
-      "transcripts":{  
-         "formatNumbers":[  
-            "digits",
-            "dashed"
-         ]
-      },
-      "publish":{  
-         "callbacks":[ 
-            {  
-               "url":"your-callback-url",
-               "method":"POST",
-               "include":[  
-                  "transcripts", "metadata"
-               ]
+{
+   "speechModel":{
+      "language":"en-US",
+      "features":[
+         "advancedPunctuation"
+      ]
+   },
+   "transcript":{
+      "formatting":{
+         "enableNumberFormatting":true
+      }
+   },
+   "priority":"high",
+   "vocabularies":[
+      {
+         "terms":[
+            {
+               "term":"Bryon"
             }
          ]
       }
+   ],
+   "knowledge":{
+      "enableDiscovery":false,
+      "enableExternalDataSources":false
+   },
+   "publish": {
+      "callbacks": [
+        {
+          "url" : "your-endpoint-for-visualvm.php",
+          "method":"POST"
+        }
+      ]
    }
 }

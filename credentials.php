@@ -1,7 +1,9 @@
 <?php 
 
-$vb_bearer_token = "";
+//VoiceBase BearerToken contact support@voicebase.com for help
+$bearertoken = "";
 
+//Twilio Credentials
 $twilio_account_sid = "";
 $twilio_auth_token = "";
 

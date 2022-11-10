@@ -1,38 +1,25 @@
 <?php
 
-/* VoiceBase Bearer Token */
-require "credentials.php"; 
+/* Bryon's PHP Library */
+require_once('VBAPIs.php');
 
-/* Send the Wav! */
-$RecordingUrl = $_POST['RecordingUrl'];	
+parse_str(file_get_contents("php://input"), $TwilioCallBackData);
 
-$vb_api_endpoint = "https://apis.voicebase.com/v2-beta/media";
+/* Collect Everything we need to send to VoiceBase (3  total) */
+// 1 Twilio's Wav Recording
+$RecordingUrl = $TwilioCallBackData['RecordingUrl'];
 
-/* Pass the current time through VoiceBase */
+// 2 Optional: Pass the current time and Twilio's 'from' phone number through VoiceBase
+$from = $TwilioCallBackData['From'];
+
 $time = date("h:i:sa");
-$custommetadata = '{ "metadata": {"extended" : {"time" : "'. $time . '"}}}';
 
+$metadata = '{"extended" : {"starttime" : "'. $time . '", "from" : "' . $from . '"}}';
+
+// 3 Instructions for how we want VoiceBase to process the voicemail recording
 $voicemailconfiguration = file_get_contents('voicemail.json'); 
-	
-	$headers = array(
-	    'Authorization: Bearer ' . $vb_bearer_token,
-	);
-	$params = array(
-	"configuration" => $voicemailconfiguration,
-	"metadata" => $custommetadata,
-	"media" => $RecordingUrl
-	);
-	
-	/* Construct and run a curl request */
 
-	set_time_limit(0);
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($ch, CURLOPT_URL, $vb_api_endpoint);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-	$response = curl_exec($ch);
-	curl_close($ch);
-	echo $response;
+// Finally, use Bryon's PHP library to send the voicemail to VoiceBase
+VBAPIs::uploadMediaUrl($RecordingUrl, $voicemailconfiguration, $metadata);
 
-	?>
+?>

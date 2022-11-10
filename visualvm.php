@@ -1,26 +1,31 @@
 <?php
 
-/* Need Twilio Credentials */
-require "credentials.php"; 
+require_once "VBAPIs.php";
 
-/* Need Twilio Library */
-require "twilphplib/Services/Twilio.php"; 
+require_once "credentials.php"; 
 
+/* Twilio's PHP Library */
+require_once "twilphplib/Services/Twilio.php"; 
 
-$string = file_get_contents('php://input');
-$vb_json_response =json_decode($string,true);
+//Collect the transcription from the VoiceBase CallBack
+$VBCallBackJSON = file_get_contents('php://input');
+$transcript = VBAPIs::parseCallBackTextTranscript($VBCallBackJSON);
+$transcript = base64_decode($transcript);
 
-$starttime = $vb_json_response['media']['metadata']['extended']['time'];
+/* Collect who the Voicemail was from */
+$vb_json_response = json_decode($VBCallBackJSON,true);
+$from = $vb_json_response['metadata']['extended']['from'];
+
+/* Check the time we sent through VoiceBase and the time now to calculate the processing time */
+$starttime = $vb_json_response['metadata']['extended']['starttime'];
 $stoptime = date("h:i:sa");
 
 $starttime = strtotime($starttime);
 $stoptime = strtotime($stoptime);
 
-$turnaroundtime = (($stoptime - $starttime)). " seconds";
+$turnaroundtime = ($stoptime - $starttime);
 
-$voicemailnumber = $myphonenumber;
-
-$transcript = $vb_json_response['media']['transcripts']['text'];
+/* Send SMS from Twilio */
  
 /* Create Twilio Client */
 $client = new Services_Twilio($twilio_account_sid, $twilio_auth_token);
@@ -29,8 +34,6 @@ $client = new Services_Twilio($twilio_account_sid, $twilio_auth_token);
 $client->account->messages->create(array(
     "From" => $twilio_phone_number,
     "To" => $my_phone_number,
-    "Body" => "New Voicemail: $transcript *This took $turnaroundtime seconds to process at VoiceBase*"));
+    "Body" => "New Voicemail from $from: $transcript *This took $turnaroundtime seconds to process at VoiceBase*"));
 	
-/* Twilio SMS in 48 seconds
-	https://www.twilio.com/blog/2016/07/send-sms-with-php-and-twilio-in-60-seconds.html */
-?>
+?> 

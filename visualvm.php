@@ -34,6 +34,6 @@ $client = new Services_Twilio($twilio_account_sid, $twilio_auth_token);
 $client->account->messages->create(array(
     "From" => $twilio_phone_number,
     "To" => $my_phone_number,
-    "Body" => "New Voicemail from $from: $transcript *This took $turnaroundtime seconds to process at VoiceBase*"));
+    "Body" => "New Voicemail from:\n$from\n---\n$transcript\n---\n*This took $turnaroundtime seconds to process at VoiceBase*"));
 	
 ?> 
